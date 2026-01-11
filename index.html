@@ -3,24 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Residentes - Senderos de las Acacias</title>
+  <title>Senderos de las Acacias - Gestión</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body { font-family: 'Poppins', sans-serif; background: #eef2f7; color: #2c3e50; }
     .hidden { display: none; }
-    .card-panel { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; padding: 35px; }
-    .brand-logo { color: #1a237e; font-weight: 600; font-size: 1.8rem; margin-bottom: 0; }
-    .sub-brand { font-size: 1.1rem; color: #5c6bc0; margin-top: 0; margin-bottom: 2rem; }
-    .btn { border-radius: 12px; text-transform: none; font-weight: 600; height: 50px; box-shadow: none; }
-    .indigo-dark { background-color: #1a237e !important; }
-    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; }
+    .card-panel { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 35px; }
+    .brand-logo { color: #1a237e; font-weight: 600; font-size: 1.8rem; }
+    .btn { border-radius: 12px; font-weight: 600; height: 50px; }
+    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; }
     .data-group { margin-bottom: 20px; }
-    .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
+    .data-label { font-weight: 600; display: block; }
     .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
-    .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
-    .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
+    .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; }
     #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
     .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
   </style>
@@ -32,69 +29,63 @@
     
     <div id="view-login" class="card-panel center-align">
       <h1 class="brand-logo">Gestión de Residentes</h1>
-      <p class="sub-brand">Senderos de las Acacias</p>
+      <p class="grey-text">Senderos de las Acacias</p>
       <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
-      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario"></div>
+      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula"></div>
       <div class="input-field"><input id="l-pas" type="password" placeholder="Contraseña"></div>
-      <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
-      <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
+      <button class="btn indigo darken-4 white-text" style="width:100%" onclick="login()">Iniciar Sesión</button>
+      <button class="btn-flat indigo-text" style="margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
     </div>
 
     <div id="view-dash" class="hidden card-panel">
       <h5 class="center-align">Hola, <span id="dash-user" class="indigo-text"></span></h5>
-      <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
-      <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
-      <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
-      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
+      <p class="center-align grey-text">Inmueble: <span id="dash-inm"></span></p>
+      <button class="btn white blue-text text-darken-4" style="border:1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
+      <button class="btn white orange-text text-darken-4" style="border:1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
+      <button class="btn white purple-text text-darken-4" style="border:1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
       <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     <div id="view-verify" class="hidden card-panel">
       <h5 class="section-title">Datos de Residentes</h5>
       <div id="verify-res-content"></div>
-      <div class="divider-light"></div>
+      <div class="divider"></div>
       <h5 class="section-title">Vehículos Registrados</h5>
       <div id="verify-veh-content"></div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="showView('view-update')">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+        <button class="btn orange darken-4 white-text" style="flex:1;" onclick="showView('view-update')">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex:1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
 
     <div id="view-update" class="hidden card-panel">
       <h5 class="section-title">Actualizar Datos</h5>
-      <div class="row" style="margin-bottom: 0;">
+      <div class="row">
         <div id="form-residentes"></div>
         <div id="form-vehiculos"></div>
       </div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+        <button class="btn orange darken-4 white-text" style="flex:1;" onclick="valAndSave()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex:1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
 
     <div id="view-pass" class="hidden card-panel">
-      <h5 class="section-title">Cambiar de Contraseña</h5>
-      <div class="pass-container input-field">
-        <input id="p-new" type="password" placeholder="Nueva Contraseña">
-        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
-      </div>
-      <div class="pass-container input-field">
-        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
-        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
-      </div>
+      <h5 class="section-title">Cambiar Contraseña</h5>
+      <div class="input-field"><input id="p-new" type="password" placeholder="Nueva Contraseña"></div>
+      <div class="input-field"><input id="p-confirm" type="password" placeholder="Confirmar Contraseña"></div>
       <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
       <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+        <button class="btn orange darken-4 white-text" style="flex:1;" onclick="submitPass()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex:1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
 
     <div id="view-forgot" class="hidden card-panel center-align">
       <i class="material-icons large indigo-text">lock_outline</i>
       <h5>Atención</h5>
-      <p>Solicite el cambio de contraseña al correo de administración.</p>
+      <p>Solicite el cambio de contraseña a administración.</p>
     </div>
   </div>
 
@@ -102,161 +93,104 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPd3-io_WZKtPW16jWzUVTeMRrHhSMNrFqUm3lPFtB7lsChDSe2LfiTDyp2HObZ33n/exec"; 
     let sess = { row: null, user: null };
 
-    // Generar campos de residentes (1 al 5)
-    const rForm = document.getElementById('form-residentes');
-    for(let i=1; i<=5; i++) {
-      rForm.innerHTML += `
-        <div class="input-field col s12">
-          <label class="active-label">Residente ${i == 1 ? 'Principal' : i}</label>
-          <input id="u-res${i}" type="text" placeholder="Nombre completo">
-        </div>
-        <div class="input-field col s12">
-          <label class="active-label">Teléfono Residente ${i == 1 ? 'Principal' : i}</label>
-          <input id="u-tel${i}" type="text" placeholder="Número de contacto">
-        </div>`;
+    // Construcción dinámica de campos
+    const rF = document.getElementById('form-residentes');
+    for(let i=1; i<=5; i++){
+      rF.innerHTML += `<div class="input-field col s12"><label class="active-label">Residente ${i==1?'Principal':i}</label><input id="u-res${i}" type="text"></div>
+                       <div class="input-field col s12"><label class="active-label">Teléfono ${i==1?'Principal':i}</label><input id="u-tel${i}" type="text"></div>`;
+    }
+    const vF = document.getElementById('form-vehiculos');
+    for(let i=1; i<=5; i++){
+      vF.innerHTML += `<div class="col s12 vehiculo-card"><label class="blue-text">Vehículo ${i}</label>
+                       <select id="u-t${i}" class="browser-default" style="margin:10px 0; border-radius:8px; border:1px solid #ddd;">
+                       <option value="">-- Tipo --</option><option value="MOTOCICLETA">MOTOCICLETA</option><option value="AUTOMÓVIL">AUTOMÓVIL</option><option value="CAMIONETA">CAMIONETA</option></select>
+                       <input id="u-p${i}" type="text" maxlength="6" placeholder="PLACA" oninput="this.value=this.value.toUpperCase()"></div>`;
     }
 
-    // Generar campos de vehículos (1 al 5)
-    const vForm = document.getElementById('form-vehiculos');
-    for(let i=1; i<=5; i++) {
-      vForm.innerHTML += `
-        <div class="col s12 vehiculo-card">
-          <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
-          <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
-            <option value="">-- Seleccione Tipo --</option>
-            <option value="MOTOCICLETA">MOTOCICLETA</option>
-            <option value="AUTOMÓVIL">AUTOMÓVIL</option>
-            <option value="CAMIONETA">CAMIONETA</option>
-          </select>
-          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa ${i}" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
-        </div>`;
-    }
-
-    async function callAPI(payload) {
-      document.getElementById('loader').style.display = 'block';
+    async function callAPI(p){
+      document.getElementById('loader').style.display='block';
       try {
-        const response = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        return await response.json();
-      } catch (e) {
-        alert("Error de conexión.");
-        return { success: false };
-      } finally {
-        document.getElementById('loader').style.display = 'none';
-      }
+        const r = await fetch(WEB_APP_URL, {method:'POST', body:JSON.stringify(p)});
+        return await r.json();
+      } catch(e) { alert("Error de red"); return {success:false}; }
+      finally { document.getElementById('loader').style.display='none'; }
     }
 
-    async function login() {
-      const inm = document.getElementById('l-inm').value.toUpperCase();
-      const ced = document.getElementById('l-ced').value;
-      const pas = document.getElementById('l-pas').value;
-      if(!inm || !ced || !pas) return alert("Complete los datos.");
-      const res = await callAPI({ action: 'login', inmueble: inm, cedula: ced, password: pas });
-      if(res.success) {
-        sess = { row: res.rowIndex, user: res.userData };
-        document.getElementById('dash-user').innerText = res.userData.nombre;
-        document.getElementById('dash-inm').innerText = res.userData.inmueble;
+    async function login(){
+      const i=document.getElementById('l-inm').value, c=document.getElementById('l-ced').value, p=document.getElementById('l-pas').value;
+      if(!i||!c||!p) return alert("Faltan datos");
+      const r = await callAPI({action:'login', inmueble:i, cedula:c, password:p});
+      if(r.success){
+        sess = {row: r.rowIndex, user: r.userData};
+        document.getElementById('dash-user').innerText = r.userData.nombre;
+        document.getElementById('dash-inm').innerText = r.userData.inmueble;
         showView('view-dash');
-      } else alert(res.message);
+      } else alert(r.message);
     }
 
-    function renderVerify() {
-      const u = sess.user;
-      let resHTML = "";
-      for(let i=1; i<=5; i++) {
-        if(u['res'+i]) {
-          resHTML += `
-            <div class="data-group">
-              <span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span>
-              <span class="data-sublabel">Tel: ${u['telR'+i] || '---'}</span>
-            </div>`;
-        }
+    function renderVerify(){
+      const u = sess.user; let h = "";
+      for(let i=1; i<=5; i++){
+        if(u['res'+i]) h += `<div class="data-group"><span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]||'---'}</span></div>`;
       }
-      document.getElementById('verify-res-content').innerHTML = resHTML || '<p>No hay residentes registrados.</p>';
-
-      let vehHTML = "";
-      for(let i=1; i<=5; i++) {
-        if(u['p'+i]) {
-          vehHTML += `
-            <div class="data-group">
-              <span class="data-label">Vehículo: ${u['t'+i]} - [${u['p'+i]}]</span>
-            </div>`;
-        }
+      document.getElementById('verify-res-content').innerHTML = h || "Sin residentes";
+      let v = "";
+      for(let i=1; i<=5; i++){
+        if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - [${u['p'+i]}]</span></div>`;
       }
-      document.getElementById('verify-veh-content').innerHTML = vehHTML || '<p class="grey-text">Sin vehículos registrados.</p>';
+      document.getElementById('verify-veh-content').innerHTML = v || "Sin vehículos";
     }
 
-    async function valAndSave() {
+    async function valAndSave(){
       let d = {};
-      for(let i=1; i<=5; i++) {
-        const nom = document.getElementById('u-res'+i).value.trim();
-        const tel = document.getElementById('u-tel'+i).value.trim();
-        if(nom && !tel) return alert(`El Residente ${i} requiere un teléfono.`);
-        d['res'+i] = nom; d['telR'+i] = tel;
+      // 1. Recolección y validación de residentes
+      for(let i=1; i<=5; i++){
+        const n = document.getElementById('u-res'+i).value.trim(), t = document.getElementById('u-tel'+i).value.trim();
+        if(n && !t) return alert("El Residente "+i+" requiere teléfono.");
+        d['res'+i] = n; d['telR'+i] = t;
       }
-      for(let i=1; i<=5; i++) {
-        d['t'+i] = document.getElementById('u-t'+i).value;
-        d['p'+i] = document.getElementById('u-p'+i).value.toUpperCase();
-      }
+      // 2. Recolección de vehículos
+      for(let i=1; i<=5; i++){ d['t'+i]=document.getElementById('u-t'+i).value; d['p'+i]=document.getElementById('u-p'+i).value.toUpperCase(); }
 
-      // Lógica 1.3: Restauración Propietario Corregida
-      if(!d.res1 && !d.telR1) {
-        if(!confirm("Se borrarán residentes y vehículos. Se restaurarán los datos del propietario. ¿Continuar?")) return;
-        for(let i=1; i<=5; i++){
-          d['res'+i] = ""; d['telR'+i] = ""; d['t'+i] = ""; d['p'+i] = "";
-        }
+      // 3. Lógica de Restauración: Si Residente 1 está vacío
+      if(!d.res1){
+        if(!confirm("Se borrarán los datos y se restaurarán los del Propietario. ¿Continuar?")) return;
+        // Limpiar todo
+        for(let i=1; i<=5; i++){ d['res'+i]=""; d['telR'+i]=""; d['t'+i]=""; d['p'+i]=""; }
+        // Sobrescribir con datos guardados del Propietario
         d.res1 = sess.user.nombre;
-        d.telR1 = sess.user.telProp; // Ahora sí captura el teléfono correctamente
+        d.telR1 = sess.user.telProp; 
       }
 
-      const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
-      if(res.success) {
-        alert("¡Datos actualizados!");
-        sess.user = {...sess.user, ...d};
-        showView('view-dash');
-      }
+      const r = await callAPI({action:'update', rowIndex:sess.row, data:d});
+      if(r.success){ alert("Datos Guardados"); sess.user = {...sess.user, ...d}; showView('view-dash'); }
     }
 
-    async function submitPass() {
-      const n1 = document.getElementById('p-new').value;
-      const n2 = document.getElementById('p-confirm').value;
-      const tel = document.getElementById('p-tel').value;
-      const ema = document.getElementById('p-ema').value;
-      if(!n1 || !n2 || !tel || !ema) return alert("Complete todo.");
-      if(n1 !== n2) return alert("No coinciden.");
-      const res = await callAPI({ action: 'changePass', rowIndex: sess.row, newPass: n1, tel: tel, email: ema });
-      if(res.success) { alert("Éxito."); cerrarSesion(); }
-      else alert(res.message);
-    }
-
-    function fillUpdate() {
+    function fillUpdate(){
       const u = sess.user;
-      for(let i=1; i<=5; i++) {
-        document.getElementById('u-res'+i).value = u['res'+i] || "";
-        document.getElementById('u-tel'+i).value = u['telR'+i] || "";
-        document.getElementById('u-t'+i).value = u['t'+i] || "";
-        document.getElementById('u-p'+i).value = u['p'+i] || "";
+      for(let i=1; i<=5; i++){
+        document.getElementById('u-res'+i).value = u['res'+i]||"";
+        document.getElementById('u-tel'+i).value = u['telR'+i]||"";
+        document.getElementById('u-t'+i).value = u['t'+i]||"";
+        document.getElementById('u-p'+i).value = u['p'+i]||"";
       }
     }
 
-    function showView(id) {
-      document.querySelectorAll('.container > div:not(#loader)').forEach(v => v.classList.add('hidden'));
+    async function submitPass(){
+      const n1=document.getElementById('p-new').value, n2=document.getElementById('p-confirm').value, t=document.getElementById('p-tel').value, e=document.getElementById('p-ema').value;
+      if(n1!==n2) return alert("Contraseñas no coinciden");
+      const r = await callAPI({action:'changePass', rowIndex:sess.row, newPass:n1, tel:t, email:e});
+      if(r.success){ alert("Cambio exitoso"); cerrarSesion(); } else alert(r.message);
+    }
+
+    function showView(id){
+      document.querySelectorAll('.container > div:not(#loader)').forEach(v=>v.classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
-      if(id === 'view-verify') renderVerify();
-      if(id === 'view-update') fillUpdate();
+      if(id==='view-verify') renderVerify();
+      if(id==='view-update') fillUpdate();
     }
-
-    function togglePass(id) {
-      const x = document.getElementById(id);
-      x.type = x.type === "password" ? "text" : "password";
-    }
-
-    function cerrarSesion() { location.reload(); }
-    function ejecutarFlujoOlvido() { showView('view-forgot'); setTimeout(cerrarSesion, 6000); }
+    function cerrarSesion(){ location.reload(); }
+    function ejecutarFlujoOlvido(){ showView('view-forgot'); setTimeout(cerrarSesion, 5000); }
   </script>
 </body>
 </html>
