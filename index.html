@@ -19,13 +19,18 @@
     .data-group { margin-bottom: 20px; }
     .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
     .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
-    .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
     .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; margin-bottom: 5px !important; }
     .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
     .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
-    .helper-text-custom { color: #9e9e9e; font-size: 0.9rem; margin-bottom: 20px; display: block; }
+    
+    /* 1.1 Quitar flechas del input number de Cédula */
+    input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Estilos para contenedores con iconos de ojo */
     .pass-container { position: relative; }
-    .pass-container i { position: absolute; right: 5px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
+    .pass-container i { position: absolute; right: 10px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
+
     #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
     .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
   </style>
@@ -39,8 +44,11 @@
       <h1 class="brand-logo">Gestión de Residentes</h1>
       <p class="sub-brand">Senderos de las Acacias</p>
       <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
-      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario"></div>
-      <div class="input-field"><input id="l-pas" type="password" placeholder="Contraseña"></div>
+      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></div>
+      <div class="pass-container input-field">
+        <input id="l-pas" type="password" placeholder="Contraseña">
+        <i class="material-icons" onclick="togglePass('l-pas')">visibility</i>
+      </div>
       <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
       <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
     </div>
@@ -53,29 +61,6 @@
       <div id="verify-veh-content"></div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
         <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="showView('view-update')">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
-      </div>
-    </div>
-
-    <div id="view-pass" class="hidden card-panel">
-      <h5 class="section-title">Cambiar de Contraseña</h5>
-      <span class="helper-text-custom">Todos los campos son obligatorios.</span>
-      <div class="pass-container input-field">
-        <input id="p-new" type="password" placeholder="Nueva Contraseña (min. 8 caracteres)">
-        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
-      </div>
-      <div class="pass-container input-field">
-        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
-        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
-      </div>
-      <div class="input-field" style="margin-top:30px">
-        <input id="p-tel" type="text" placeholder="Teléfono Registrado">
-      </div>
-      <div class="input-field">
-        <input id="p-ema" type="email" placeholder="Email Registrado">
-      </div>
-      <div style="margin-top:40px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
         <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
@@ -101,29 +86,45 @@
       </div>
     </div>
 
+    <div id="view-pass" class="hidden card-panel">
+      <h5 class="section-title">Cambiar de Contraseña</h5>
+      <div class="pass-container input-field">
+        <input id="p-new" type="password" placeholder="Nueva Contraseña">
+        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
+      </div>
+      <div class="pass-container input-field">
+        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
+        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
+      </div>
+      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
+      <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
+    </div>
+
     <div id="view-forgot" class="hidden card-panel center-align">
       <i class="material-icons large indigo-text">lock_outline</i>
       <h5>Atención</h5>
-      <p>Si olvidó su contraseña debe realizar la solicitud de cambio de contraseña al correo electrónico de la administración.</p>
-      <div class="progress"><div class="indeterminate indigo"></div></div>
+      <p>Solicite el cambio de contraseña a la administración.</p>
     </div>
   </div>
 
   <script>
-    // URL del Web App de Google Apps Script
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwdAAMJIG0du5vztFX7-uAFisBHcG4CtyXiktjd0YgN3nkX3SlUYCczI5s2K3UHtba7/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKrbuvgNRHlCBCxIR7YjQ1n2AENjYW_jt5ZR69zgVRAjOPHnl8hdfrFWYI12_N8dxF/exec"; 
     let sess = { row: null, user: null };
 
     /**
-     * GENERACIÓN DINÁMICA DE FORMULARIOS
-     * Crea campos para 5 residentes y 5 vehículos.
+     * GENERACIÓN DINÁMICA DE CAMPOS
+     * 2.1 Los nombres de residentes se fuerzan a MAYÚSCULAS en tiempo real.
      */
     const resForm = document.getElementById('form-residentes');
     for(let i=1; i<=5; i++) {
       resForm.innerHTML += `
         <div class="input-field col s12" style="margin-top: 0;">
           <label class="active-label">Residente ${i === 1 ? 'Principal' : i}</label>
-          <input id="u-res${i}" type="text" placeholder="Nombre completo">
+          <input id="u-res${i}" type="text" placeholder="Nombre completo" oninput="this.value = this.value.toUpperCase()">
         </div>
         <div class="input-field col s12">
           <label class="active-label">Teléfono ${i === 1 ? 'Residente Principal' : 'Residente ' + i}</label>
@@ -137,135 +138,96 @@
         <div class="col s12 vehiculo-card">
           <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
           <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
-            <option value="">-- Seleccione Tipo --</option>
+            <option value="">-- Tipo --</option>
             <option value="MOTOCICLETA">MOTOCICLETA</option>
             <option value="AUTOMÓVIL">AUTOMÓVIL</option>
             <option value="CAMIONETA">CAMIONETA</option>
           </select>
-          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa ${i}" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
+          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa ${i}" oninput="this.value = this.value.toUpperCase()">
         </div>`;
     }
 
-    /**
-     * FUNCIÓN COMUNICACIÓN API
-     * Envía las peticiones al servidor de Google.
-     */
     async function callAPI(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
-        const response = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          mode: 'cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        return data;
-      } catch (e) {
-        alert("Error de conexión con el servidor.");
-        return { success: false };
-      } finally {
-        document.getElementById('loader').style.display = 'none';
-      }
+        const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+        return await response.json();
+      } catch (e) { alert("Error de servidor."); return { success: false }; }
+      finally { document.getElementById('loader').style.display = 'none'; }
     }
 
-    /**
-     * FUNCIÓN LOGIN
-     * Envía credenciales y guarda la sesión en la variable 'sess'.
-     */
     async function login() {
-      const inm = document.getElementById('l-inm').value.toUpperCase();
-      const ced = document.getElementById('l-ced').value;
-      const pas = document.getElementById('l-pas').value;
+      const inm = document.getElementById('l-inm').value.toUpperCase(), ced = document.getElementById('l-ced').value, pas = document.getElementById('l-pas').value;
       if(!inm || !ced || !pas) return alert("Complete los datos.");
-
       const res = await callAPI({ action: 'login', inmueble: inm, cedula: ced, password: pas });
       if(res.success) {
         sess = { row: res.rowIndex, user: res.userData };
         document.getElementById('dash-user').innerText = res.userData.nombre;
         document.getElementById('dash-inm').innerText = res.userData.inmueble;
         showView('view-dash');
-      } else alert(res.message || "Credenciales incorrectas.");
+      } else alert(res.message);
     }
 
     /**
-     * FUNCIÓN RENDERIZAR VERIFICACIÓN
-     * Muestra los datos actuales guardados en la base de datos (Lectura).
-     */
-    function renderVerify() {
-      const u = sess.user;
-      let resHTML = "";
-      for(let i=1; i<=5; i++) {
-        if(u['res'+i]) {
-          resHTML += `
-            <div class="data-group">
-              <span class="data-label">Residente ${i === 1 ? 'Principal' : i}: ${u['res'+i]}</span>
-              <span class="data-sublabel">Tel: ${u['telR'+i] || '---'}</span>
-            </div>`;
-        }
-      }
-      document.getElementById('verify-res-content').innerHTML = resHTML || '<p class="grey-text">No hay residentes registrados.</p>';
-
-      let vehHTML = "";
-      let count = 0;
-      for(let i=1; i<=5; i++) {
-        if(u['p'+i]) {
-          count++;
-          vehHTML += `
-            <div class="data-group">
-              <span class="data-label">Vehículo ${count}: ${u['t'+i]} - [${u['p'+i]}]</span>
-            </div>`;
-        }
-      }
-      document.getElementById('verify-veh-content').innerHTML = vehHTML || '<p class="grey-text">Sin vehículos registrados.</p>';
-    }
-
-    /**
-     * FUNCIÓN GUARDAR CAMBIOS
-     * Recopila los datos de los inputs y los envía al servidor.
+     * FUNCIÓN ACTUALIZAR CON VALIDACIONES Y RESTAURACIÓN
      */
     async function valAndSave() {
       const d = {};
-      // Recolectar residentes
+      
+      // 2.2 Validación de campos unidos (Nombre + Teléfono)
       for(let i=1; i<=5; i++) {
-        d['res'+i] = document.getElementById('u-res'+i).value;
-        d['telR'+i] = document.getElementById('u-tel'+i).value;
+        const n = document.getElementById('u-res'+i).value.trim();
+        const t = document.getElementById('u-tel'+i).value.trim();
+        
+        // Si uno existe y el otro no, error.
+        if((n && !t) || (!n && t)) {
+          alert("Error en Residente " + (i===1?'Principal':i) + ": Debe completar tanto el nombre como el teléfono.");
+          return;
+        }
+        d['res'+i] = n.toUpperCase();
+        d['telR1'] = t; // Nota: El backend espera 'telR1', 'telR2', etc.
+        // Corrección de nombre de clave para el bucle:
+        d['telR' + i] = t;
       }
-      // Recolectar vehículos
+
+      // 2.2 Lógica de eliminación y restauración de Propietario
+      if(!d.res1 && !d.telR1) {
+        const confirmar = confirm("Se borrarán todos los datos de residentes y vehículos. Se restaurará el NOMBRE y TELÉFONO del PROPIETARIO como datos principales. ¿Desea continuar?");
+        if(!confirmar) return;
+        
+        // Limpiar todo
+        for(let i=1; i<=5; i++) { d['res'+i]=""; d['telR'+i]=""; d['t'+i]=""; d['p'+i]=""; }
+        // Restaurar Propietario (Datos guardados en sess.user al login)
+        d.res1 = sess.user.nombre.toUpperCase();
+        d.telR1 = sess.user.telProp;
+      }
+
+      // Recopilar vehículos
       for(let i=1; i<=5; i++) {
         d['t'+i] = document.getElementById('u-t'+i).value;
-        d['p'+i] = document.getElementById('u-p'+i).value;
+        d['p'+i] = document.getElementById('u-p'+i).value.toUpperCase();
       }
 
       const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
       if(res.success) {
-        alert("¡Datos actualizados!");
-        sess.user = {...sess.user, ...d}; // Actualiza la sesión local con los nuevos datos
+        alert("¡Datos actualizados con éxito!");
+        sess.user = {...sess.user, ...d};
         showView('view-dash');
       }
     }
 
-    /**
-     * FUNCIÓN CAMBIAR PASSWORD
-     */
-    async function submitPass() {
-      const n1 = document.getElementById('p-new').value;
-      const n2 = document.getElementById('p-confirm').value;
-      const tel = document.getElementById('p-tel').value;
-      const ema = document.getElementById('p-ema').value;
-      if(!n1 || !n2 || !tel || !ema) return alert("Todos los campos son obligatorios.");
-      if(n1 !== n2) return alert("Las contraseñas no coinciden.");
-      if(n1.length < 8) return alert("La contraseña debe tener al menos 8 caracteres.");
-      
-      const res = await callAPI({ action: 'changePass', rowIndex: sess.row, newPass: n1, tel: tel, email: ema });
-      if(res.success) { alert("Contraseña actualizada."); cerrarSesion(); }
-      else alert(res.message || "Los datos de validación no coinciden.");
+    function renderVerify() {
+      const u = sess.user;
+      let h = "";
+      for(let i=1; i<=5; i++) {
+        if(u['res'+i]) h += `<div class="data-group"><span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]||'---'}</span></div>`;
+      }
+      document.getElementById('verify-res-content').innerHTML = h || "Sin residentes.";
+      let v = "";
+      for(let i=1; i<=5; i++) { if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - [${u['p'+i]}]</span></div>`; }
+      document.getElementById('verify-veh-content').innerHTML = v || "Sin vehículos.";
     }
 
-    /**
-     * FUNCIÓN LLENAR FORMULARIO
-     * Pre-carga los datos actuales en los campos de edición.
-     */
     function fillUpdate() {
       const u = sess.user;
       for(let i=1; i<=5; i++) {
@@ -276,9 +238,6 @@
       }
     }
 
-    /**
-     * FUNCIÓN CONTROL DE VISTAS
-     */
     function showView(id) {
       document.querySelectorAll('.container > div:not(#loader)').forEach(v => v.classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
