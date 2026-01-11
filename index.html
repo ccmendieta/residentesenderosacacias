@@ -16,16 +16,17 @@
     .btn { border-radius: 12px; text-transform: none; font-weight: 600; height: 50px; box-shadow: none; }
     .indigo-dark { background-color: #1a237e !important; }
     
-    /* Estilos específicos para visualización de datos (Imagen 1) */
+    /* Estilos específicos para visualización de datos */
     .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; }
     .data-group { margin-bottom: 20px; }
     .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
     .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
     .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
     
-    /* Estilos para formularios (Imagen 2) */
-    .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; }
+    /* Estilos para formularios */
+    .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; margin-bottom: 5px !important; }
     .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
+    .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
     .helper-text-custom { color: #9e9e9e; font-size: 0.9rem; margin-bottom: 20px; display: block; }
     .pass-container { position: relative; }
     .pass-container i { position: absolute; right: 5px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
@@ -40,7 +41,7 @@
   <div class="container" style="max-width: 480px; margin-top: 5vh;">
     
     <div id="view-login" class="card-panel center-align">
-      <h1 class="brand-logo">Gestión Residentes</h1>
+      <h1 class="brand-logo">Gestión de Residentes</h1>
       <p class="sub-brand">Senderos de las Acacias</p>
       <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
       <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario"></div>
@@ -51,16 +52,10 @@
 
     <div id="view-verify" class="hidden card-panel">
       <h5 class="section-title">Datos de Residentes</h5>
-      
-      <div id="verify-res-content">
-        </div>
-
+      <div id="verify-res-content"></div>
       <div class="divider-light"></div>
-      
       <h5 class="section-title">Vehículos Registrados</h5>
-      <div id="verify-veh-content">
-        </div>
-
+      <div id="verify-veh-content"></div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
         <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="showView('view-update')">Actualizar</button>
         <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
@@ -70,28 +65,23 @@
     <div id="view-pass" class="hidden card-panel">
       <h5 class="section-title">Cambiar de Contraseña</h5>
       <span class="helper-text-custom">Todos los campos son obligatorios.</span>
-      
       <div class="pass-container input-field">
         <input id="p-new" type="password" placeholder="Nueva Contraseña (min. 8 caracteres)">
         <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
       </div>
-
       <div class="pass-container input-field">
         <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
         <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
       </div>
-
       <div class="input-field" style="margin-top:30px">
         <input id="p-tel" type="text" placeholder="Teléfono Registrado">
       </div>
-      
       <div class="input-field">
         <input id="p-ema" type="email" placeholder="Email Registrado">
       </div>
-      
-      <div style="margin-top:30px">
-        <button class="btn indigo-dark white-text" style="width:100%" onclick="submitPass()">Actualizar</button>
-        <button class="btn-flat grey-text center-align" style="width:100%; margin-top:10px" onclick="showView('view-dash')">VOLVER</button>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
 
@@ -100,27 +90,41 @@
       <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
       <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
       <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
-      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Seguridad / Contraseña</button>
+      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
       <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     <div id="view-update" class="hidden card-panel">
-      <h6 class="indigo-text font-weight-bold">Actualizar Datos</h6>
-      <div class="row">
-        <div class="input-field col s12"><input id="u-res1" type="text" placeholder="Nombre Residente 1"></div>
-        <div class="input-field col s12"><input id="u-tel1" type="text" placeholder="Teléfono Residente 1"></div>
-        <div class="input-field col s12"><input id="u-res2" type="text" placeholder="Nombre Residente 2"></div>
-        <div class="input-field col s12"><input id="u-tel2" type="text" placeholder="Teléfono Residente 2"></div>
+      <h5 class="section-title">Actualizar Datos</h5>
+      <div class="row" style="margin-bottom: 0;">
+        <div class="input-field col s12" style="margin-top: 0;">
+          <label class="active-label">Residente 1</label>
+          <input id="u-res1" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="input-field col s12">
+          <label class="active-label">Teléfono Residente 1</label>
+          <input id="u-tel1" type="text" placeholder="Número de contacto">
+        </div>
+        <div class="input-field col s12">
+          <label class="active-label">Residente 2</label>
+          <input id="u-res2" type="text" placeholder="Nombre completo">
+        </div>
+        <div class="input-field col s12">
+          <label class="active-label">Teléfono Residente 2</label>
+          <input id="u-tel2" type="text" placeholder="Número de contacto">
+        </div>
         <div id="form-vehiculos"></div>
       </div>
-      <button class="btn green darken-2 white-text" style="width:100%" onclick="valAndSave()">Guardar Cambios</button>
-      <button class="btn-flat grey-text" style="width:100%; margin-top:10px" onclick="showView('view-dash')">CANCELAR</button>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
     </div>
 
     <div id="view-forgot" class="hidden card-panel center-align">
       <i class="material-icons large indigo-text">lock_outline</i>
       <h5>Atención</h5>
-      <p>Si olvidó su contraseña, debe solicitar el cambio al correo de la administración.</p>
+      <p>Si olvidó su contraseña debe realizar la solicitud de cambio de contraseña al correo electrónico de la administración.</p>
       <div class="progress"><div class="indeterminate indigo"></div></div>
     </div>
   </div>
@@ -129,13 +133,12 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPd3-io_WZKtPW16jWzUVTeMRrHhSMNrFqUm3lPFtB7lsChDSe2LfiTDyp2HObZ33n/exec"; 
     let sess = { row: null, user: null };
 
-    // Inicializar campos de vehículos en vista actualizar
     const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=4; i++) {
       vForm.innerHTML += `
         <div class="col s12 vehiculo-card">
-          <label class="blue-text">Vehículo ${i}</label>
-          <select id="u-t${i}" class="browser-default" style="margin-bottom:10px; border: 1px solid #ddd;">
+          <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
+          <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
             <option value="">-- Seleccione Tipo --</option>
             <option value="MOTOCICLETA">MOTOCICLETA</option>
             <option value="AUTOMÓVIL">AUTOMÓVIL</option>
@@ -179,11 +182,8 @@
       } else alert(res.message || "Credenciales incorrectas.");
     }
 
-    // LÓGICA DE RENDERIZADO PARA VISTA VERIFICAR (IMAGEN 1)
     function renderVerify() {
       const u = sess.user;
-      
-      // Residentes
       let resHTML = `
         <div class="data-group">
           <span class="data-label">Residente 1: ${u.res1 || 'NO REGISTRADO'}</span>
@@ -192,11 +192,9 @@
         <div class="data-group">
           <span class="data-label">Residente 2: ${u.res2 || 'NO REGISTRADO'}</span>
           <span class="data-sublabel">Tel: ${u.telR2 || '---'}</span>
-        </div>
-      `;
+        </div>`;
       document.getElementById('verify-res-content').innerHTML = resHTML;
 
-      // Vehículos
       let vehHTML = "";
       let count = 0;
       for(let i=1; i<=4; i++) {
@@ -233,25 +231,12 @@
       const n2 = document.getElementById('p-confirm').value;
       const tel = document.getElementById('p-tel').value;
       const ema = document.getElementById('p-ema').value;
-
       if(!n1 || !n2 || !tel || !ema) return alert("Todos los campos son obligatorios.");
       if(n1 !== n2) return alert("Las contraseñas no coinciden.");
       if(n1.length < 8) return alert("La contraseña debe tener al menos 8 caracteres.");
-
-      const res = await callAPI({ 
-        action: 'changePass', 
-        rowIndex: sess.row, 
-        newPass: n1, 
-        tel: tel, 
-        email: ema 
-      });
-
-      if(res.success) { 
-        alert("Contraseña actualizada."); 
-        cerrarSesion(); 
-      } else {
-        alert(res.message || "Los datos de validación no coinciden.");
-      }
+      const res = await callAPI({ action: 'changePass', rowIndex: sess.row, newPass: n1, tel: tel, email: ema });
+      if(res.success) { alert("Contraseña actualizada."); cerrarSesion(); }
+      else alert(res.message || "Los datos de validación no coinciden.");
     }
 
     function fillUpdate() {
