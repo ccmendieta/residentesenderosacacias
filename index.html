@@ -15,24 +15,21 @@
     .sub-brand { font-size: 1.1rem; color: #5c6bc0; margin-top: 0; margin-bottom: 2rem; }
     .btn { border-radius: 12px; text-transform: none; font-weight: 600; height: 50px; box-shadow: none; }
     .indigo-dark { background-color: #1a237e !important; }
-    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; display: flex; justify-content: space-between; align-items: center; }
+    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; }
+    .data-group { margin-bottom: 20px; }
+    .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
+    .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
     .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; margin-bottom: 5px !important; }
     .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
     .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
     
-    /* Icono basurero */
-    .delete-icon { color: #bdbdbd; cursor: pointer; transition: color 0.3s; }
-    .delete-icon:hover { color: #e53935; }
-
-    /* Contenedor teléfono con código de país */
-    .phone-container { display: flex; gap: 10px; align-items: flex-end; }
-    .country-code { width: 80px !important; text-align: center; }
-
+    /* Quita flechas en inputs numericos */
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
 
     .pass-container { position: relative; }
     .pass-container i { position: absolute; right: 10px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
+
     #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
     .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
   </style>
@@ -45,42 +42,24 @@
     <div id="view-login" class="card-panel center-align">
       <h1 class="brand-logo">Gestión de Residentes</h1>
       <p class="sub-brand">Senderos de las Acacias</p>
+      
       <div class="input-field">
-        <input id="l-inm" type="text" maxlength="4" placeholder="Inmueble (Ej: A101)" oninput="this.value = this.value.toUpperCase()">
+        <input id="l-inm" type="text" maxlength="4" placeholder="Inmueble (Ej: A101)" 
+               oninput="this.value = this.value.toUpperCase()"
+               title="Una letra (A-J) seguida de 3 números">
       </div>
+
       <div class="input-field">
         <input id="l-ced" type="number" placeholder="Cédula de Propietario" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
       </div>
+
       <div class="pass-container input-field">
         <input id="l-pas" type="password" placeholder="Contraseña">
         <i class="material-icons" onclick="togglePass('l-pas')">visibility</i>
       </div>
+
       <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
       <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
-    </div>
-
-    <div id="view-dash" class="hidden card-panel">
-      <h5 class="center-align">Hola, <span id="dash-user" class="indigo-text"></span></h5>
-      <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
-      <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
-      <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
-      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
-      <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
-    </div>
-
-    <div id="view-update" class="hidden card-panel">
-      <div class="section-title">
-        <span>Actualizar Datos</span>
-        <i class="material-icons delete-icon" onclick="borrarTodoForm()">delete</i>
-      </div>
-      <div class="row" style="margin-bottom: 0;">
-        <div id="form-residentes"></div>
-        <div id="form-vehiculos"></div>
-      </div>
-      <div style="margin-top:40px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
-      </div>
     </div>
 
     <div id="view-verify" class="hidden card-panel">
@@ -95,149 +74,202 @@
       </div>
     </div>
 
-    <div id="view-pass" class="hidden card-panel">
-      <h5 class="section-title">Cambiar Contraseña</h5>
-      <div class="pass-container input-field"><input id="p-new" type="password" placeholder="Nueva"><i class="material-icons" onclick="togglePass('p-new')">visibility</i></div>
-      <div class="pass-container input-field"><input id="p-confirm" type="password" placeholder="Confirmar"><i class="material-icons" onclick="togglePass('p-confirm')">visibility</i></div>
-      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono"></div>
-      <div class="input-field"><input id="p-ema" type="email" placeholder="Email"></div>
-      <button class="btn orange darken-4 white-text w100" style="width:100%" onclick="submitPass()">Actualizar</button>
+    <div id="view-dash" class="hidden card-panel">
+      <h5 class="center-align">Hola, <span id="dash-user" class="indigo-text"></span></h5>
+      <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
+      <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
+      <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
+      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
+      <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
-    
-    <div id="view-forgot" class="hidden card-panel center-align"><i class="material-icons large indigo-text">lock_outline</i><h5>Atención</h5><p>Consulte a la administración.</p></div>
+
+    <div id="view-update" class="hidden card-panel">
+      <h5 class="section-title">Actualizar Datos</h5>
+      <div class="row" style="margin-bottom: 0;">
+        <div id="form-residentes"></div>
+        <div id="form-vehiculos"></div>
+      </div>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
+    </div>
+
+    <div id="view-pass" class="hidden card-panel">
+      <h5 class="section-title">Cambiar de Contraseña</h5>
+      <div class="pass-container input-field">
+        <input id="p-new" type="password" placeholder="Nueva Contraseña">
+        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
+      </div>
+      <div class="pass-container input-field">
+        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
+        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
+      </div>
+      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
+      <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
+    </div>
+
+    <div id="view-forgot" class="hidden card-panel center-align">
+      <i class="material-icons large indigo-text">lock_outline</i>
+      <h5>Atención</h5>
+      <p>Solicite el cambio de contraseña a la administración.</p>
+    </div>
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyWaG0kxUdrU8fGQyTaYatqocGyXWngsjRXyf-RwIG50XqVuvq657o2RqKqrcRrTek1/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzoAAYAdgkqebEez7RP6wvcBx8o6FFDSycyL5D_M_W7g6ZmM8BjkOJ0oSc7SlPqstYU/exec"; 
     let sess = { row: null, user: null };
 
     /**
      * RENDERIZADO DINÁMICO
-     * 1.1 Inclusión de Código de País (+57) y campo teléfono de 10 dígitos.
      */
     const resForm = document.getElementById('form-residentes');
     for(let i=1; i<=5; i++) {
       resForm.innerHTML += `
-        <div class="input-field col s12" style="margin-top: 10px;">
+        <div class="input-field col s12" style="margin-top: 0;">
           <label class="active-label">Residente ${i === 1 ? 'Principal' : i}</label>
           <input id="u-res${i}" type="text" placeholder="Nombre completo" oninput="this.value = this.value.toUpperCase()">
         </div>
-        <div class="col s12">
-          <label class="active-label">Teléfono</label>
-          <div class="phone-container">
-            <input id="u-cod${i}" type="text" class="country-code" value="+57" placeholder="+00">
-            <input id="u-tel${i}" type="number" style="flex:1" placeholder="3000000000" onkeypress="return this.value.length < 10">
-          </div>
+        <div class="input-field col s12">
+          <label class="active-label">Teléfono ${i === 1 ? 'Residente Principal' : 'Residente ' + i}</label>
+          <input id="u-tel${i}" type="text" placeholder="Número de contacto">
         </div>`;
     }
 
     const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=5; i++) {
+      // 2.1 Placas: Mayúsculas y límite 6 caracteres
       vForm.innerHTML += `
         <div class="col s12 vehiculo-card">
           <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
           <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
-            <option value="">-- Tipo --</option>
+            <option value="">-- Seleccione Tipo --</option>
             <option value="MOTOCICLETA">MOTOCICLETA</option>
             <option value="AUTOMÓVIL">AUTOMÓVIL</option>
             <option value="CAMIONETA">CAMIONETA</option>
           </select>
-          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa" oninput="this.value = this.value.toUpperCase()">
+          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa ${i}" oninput="this.value = this.value.toUpperCase()">
         </div>`;
     }
 
+    /**
+     * COMUNICACIÓN CON EL API
+     */
     async function callAPI(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
         const response = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
         return await response.json();
-      } catch (e) { alert("Error de red."); return { success: false }; }
+      } catch (e) { alert("Error de servidor."); return { success: false }; }
       finally { document.getElementById('loader').style.display = 'none'; }
     }
 
+    /**
+     * LOGIN CON VALIDACIÓN DE FORMATO INMUEBLE (1.1)
+     */
     async function login() {
-      const inm = document.getElementById('l-inm').value.toUpperCase(), ced = document.getElementById('l-ced').value, pas = document.getElementById('l-pas').value;
-      if(!/^[A-J][0-9]{3}$/.test(inm)) return alert("Inmueble inválido (Ej: A101).");
+      const inm = document.getElementById('l-inm').value.toUpperCase();
+      const ced = document.getElementById('l-ced').value;
+      const pas = document.getElementById('l-pas').value;
+
+      if(!inm || !ced || !pas) return alert("Complete todos los campos.");
+
+      // Regex: Una letra A-J seguida de 3 dígitos exactos
+      const regexInm = /^[A-J][0-9]{3}$/;
+      if(!regexInm.test(inm)) {
+        return alert("Formato de inmueble incorrecto. Debe ser una letra (A-J) y tres números. Ej: A101");
+      }
+
       const res = await callAPI({ action: 'login', inmueble: inm, cedula: ced, password: pas });
-      if(res.success) { sess = { row: res.rowIndex, user: res.userData }; showView('view-dash'); } 
-      else alert(res.message);
+      if(res.success) {
+        sess = { row: res.rowIndex, user: res.userData };
+        document.getElementById('dash-user').innerText = res.userData.nombre;
+        document.getElementById('dash-inm').innerText = res.userData.inmueble;
+        showView('view-dash');
+      } else alert(res.message);
     }
 
     /**
-     * VALIDACIÓN Y GUARDADO
-     * 1.1 Regla: Colombia (+57) debe empezar por 3 y tener 10 dígitos.
+     * VALIDACIÓN Y GUARDADO DE DATOS (2.1 y 2.2)
      */
     async function valAndSave() {
       const d = {};
+      
+      // Validación Residentes (Campos unidos)
       for(let i=1; i<=5; i++) {
         const n = document.getElementById('u-res'+i).value.trim();
         const t = document.getElementById('u-tel'+i).value.trim();
-        const c = document.getElementById('u-cod'+i).value.trim();
-
-        if((n && !t) || (!n && t)) { alert("Residente "+i+": Complete nombre y teléfono."); return; }
-        
-        if(t) {
-          if(t.length !== 10) { alert("Teléfono Residente "+i+": Debe tener 10 dígitos."); return; }
-          if(c === "+57" && t[0] !== "3") { alert("Teléfono Colombia debe iniciar con 3."); return; }
-          d['telR'+i] = "(" + c + ") " + t;
-        } else { d['telR'+i] = ""; }
-        d['res'+i] = n;
+        if((n && !t) || (!n && t)) {
+          alert("Residente " + i + ": Debe completar nombre y teléfono.");
+          return;
+        }
+        d['res'+i] = n; d['telR'+i] = t;
       }
 
+      // 2.2 Validación Vehículos (Campos unidos) y Formato Placas (2.1)
       for(let i=1; i<=5; i++) {
-        const tipo = document.getElementById('u-t'+i).value, placa = document.getElementById('u-p'+i).value.trim();
-        if((tipo && !placa) || (!tipo && placa)) { alert("Vehículo "+i+": Complete tipo y placa."); return; }
+        const tipo = document.getElementById('u-t'+i).value;
+        const placa = document.getElementById('u-p'+i).value.trim().toUpperCase();
+
+        if((tipo && !placa) || (!tipo && placa)) {
+          alert("Vehículo " + i + ": Debe completar tipo y placa.");
+          return;
+        }
+
         if(placa) {
-          const reg = tipo === "MOTOCICLETA" ? /^[A-Z]{3}[0-9]{2}[A-Z]$/ : /^[A-Z]{3}[0-9]{3}$/;
-          if(!reg.test(placa)) { alert("Placa "+i+" formato inválido."); return; }
+          // Lógica de formatos de placa
+          if(tipo === "AUTOMÓVIL" || tipo === "CAMIONETA") {
+            if(!/^[A-Z]{3}[0-9]{3}$/.test(placa)) {
+              alert("Placa " + i + " inválida para Carro: 3 letras y 3 números (Ej: ABC123)");
+              return;
+            }
+          } else if(tipo === "MOTOCICLETA") {
+            if(!/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(placa)) {
+              alert("Placa " + i + " inválida para Moto: 3 letras, 2 números y 1 letra (Ej: ABC12D)");
+              return;
+            }
+          }
         }
         d['t'+i] = tipo; d['p'+i] = placa;
       }
 
+      // Restauración si se borra Residente Principal
       if(!d.res1 && !d.telR1) {
-        if(!confirm("Se restaurará al Propietario. ¿Continuar?")) return;
-        d.res1 = sess.user.nombre; d.telR1 = sess.user.telProp;
+        if(!confirm("Se borrarán residentes y vehículos. Se restaurará al Propietario. ¿Continuar?")) return;
+        for(let i=1; i<=5; i++) { d['res'+i]=""; d['telR'+i]=""; d['t'+i]=""; d['p'+i]=""; }
+        d.res1 = sess.user.nombre.toUpperCase();
+        d.telR1 = sess.user.telProp;
       }
 
       const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
-      if(res.success) { sess.user = {...sess.user, ...d}; showView('view-dash'); alert("Guardado."); }
-    }
-
-    /**
-     * 1.2 FUNCIÓN BORRAR TODO EL FORMULARIO
-     */
-    function borrarTodoForm() {
-      if(!confirm("¿Desea limpiar todos los campos del formulario?")) return;
-      for(let i=1; i<=5; i++) {
-        document.getElementById('u-res'+i).value = "";
-        document.getElementById('u-tel'+i).value = "";
-        document.getElementById('u-cod'+i).value = "+57";
-        document.getElementById('u-t'+i).value = "";
-        document.getElementById('u-p'+i).value = "";
+      if(res.success) {
+        alert("¡Datos actualizados!");
+        sess.user = {...sess.user, ...d};
+        showView('view-dash');
       }
     }
 
     function renderVerify() {
       const u = sess.user;
-      let r = "", v = "";
-      for(let i=1; i<=5; i++) if(u['res'+i]) r += `<div class="data-group"><span class="data-label">Residente ${i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]}</span></div>`;
-      for(let i=1; i<=5; i++) if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} [${u['p'+i]}]</span></div>`;
-      document.getElementById('verify-res-content').innerHTML = r || "Sin datos.";
-      document.getElementById('verify-veh-content').innerHTML = v || "Sin datos.";
+      let h = "";
+      for(let i=1; i<=5; i++) {
+        if(u['res'+i]) h += `<div class="data-group"><span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]}</span></div>`;
+      }
+      document.getElementById('verify-res-content').innerHTML = h || "Sin datos.";
+      let v = "";
+      for(let i=1; i<=5; i++) { if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - ${u['p'+i]}</span></div>`; }
+      document.getElementById('verify-veh-content').innerHTML = v || "Sin vehículos.";
     }
 
     function fillUpdate() {
       const u = sess.user;
       for(let i=1; i<=5; i++) {
         document.getElementById('u-res'+i).value = u['res'+i] || "";
-        const telFull = u['telR'+i] || "";
-        if(telFull.includes(")")) {
-          document.getElementById('u-cod'+i).value = telFull.split(")")[0].replace("(","");
-          document.getElementById('u-tel'+i).value = telFull.split(")")[1].trim();
-        } else {
-          document.getElementById('u-cod'+i).value = "+57";
-          document.getElementById('u-tel'+i).value = telFull;
-        }
+        document.getElementById('u-tel'+i).value = u['telR'+i] || "";
         document.getElementById('u-t'+i).value = u['t'+i] || "";
         document.getElementById('u-p'+i).value = u['p'+i] || "";
       }
@@ -250,7 +282,11 @@
       if(id === 'view-update') fillUpdate();
     }
 
-    function togglePass(id) { const x = document.getElementById(id); x.type = x.type === "password" ? "text" : "password"; }
+    function togglePass(id) {
+      const x = document.getElementById(id);
+      x.type = x.type === "password" ? "text" : "password";
+    }
+
     function cerrarSesion() { location.reload(); }
     function ejecutarFlujoOlvido() { showView('view-forgot'); setTimeout(cerrarSesion, 6000); }
   </script>
