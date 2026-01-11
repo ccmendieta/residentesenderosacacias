@@ -98,11 +98,11 @@
       <h5 class="section-title">Actualizar Datos</h5>
       <div class="row" style="margin-bottom: 0;">
         <div class="input-field col s12" style="margin-top: 0;">
-          <label class="active-label">Residente 1</label>
+          <label class="active-label">Residente Principal</label>
           <input id="u-res1" type="text" placeholder="Nombre completo">
         </div>
         <div class="input-field col s12">
-          <label class="active-label">Teléfono Residente 1</label>
+          <label class="active-label">Teléfono</label>
           <input id="u-tel1" type="text" placeholder="Número de contacto">
         </div>
         <div class="input-field col s12">
@@ -186,7 +186,7 @@
       const u = sess.user;
       let resHTML = `
         <div class="data-group">
-          <span class="data-label">Residente 1: ${u.res1 || 'NO REGISTRADO'}</span>
+          <span class="data-label">Residente Principal: ${u.res1 || 'NO REGISTRADO'}</span>
           <span class="data-sublabel">Tel: ${u.telR1 || '---'}</span>
         </div>
         <div class="data-group">
@@ -268,3 +268,4 @@
   </script>
 </body>
 </html>
+
