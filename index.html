@@ -10,22 +10,34 @@
   <style>
     body { font-family: 'Poppins', sans-serif; background: #eef2f7; color: #2c3e50; }
     .hidden { display: none; }
-    .card-panel { border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: none; padding: 25px; }
+    .card-panel { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; padding: 35px; }
     .brand-logo { color: #1a237e; font-weight: 600; font-size: 1.8rem; margin-bottom: 0; }
     .sub-brand { font-size: 1.1rem; color: #5c6bc0; margin-top: 0; margin-bottom: 2rem; }
-    .btn { border-radius: 8px; text-transform: none; font-weight: 500; height: 45px; box-shadow: none; width: 100%; margin-bottom: 10px; }
+    .btn { border-radius: 12px; text-transform: none; font-weight: 600; height: 50px; box-shadow: none; }
     .indigo-dark { background-color: #1a237e !important; }
-    .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; position: relative; }
-    .verify-item { border-bottom: 1px solid #eee; padding: 10px 0; }
-    #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
+    
+    /* Estilos específicos para visualización de datos (Imagen 1) */
+    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; }
+    .data-group { margin-bottom: 20px; }
+    .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
+    .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
+    .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
+    
+    /* Estilos para formularios (Imagen 2) */
+    .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; }
+    .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
+    .helper-text-custom { color: #9e9e9e; font-size: 0.9rem; margin-bottom: 20px; display: block; }
     .pass-container { position: relative; }
-    .pass-container i { position: absolute; right: 10px; top: 15px; cursor: pointer; color: #9e9e9e; }
+    .pass-container i { position: absolute; right: 5px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
+
+    #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
+    .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
   </style>
 </head>
 <body>
   <div class="progress" id="loader" style="margin:0;"><div class="indeterminate indigo"></div></div>
 
-  <div class="container" style="max-width: 500px; margin-top: 5vh;">
+  <div class="container" style="max-width: 480px; margin-top: 5vh;">
     
     <div id="view-login" class="card-panel center-align">
       <h1 class="brand-logo">Gestión Residentes</h1>
@@ -33,41 +45,67 @@
       <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
       <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario"></div>
       <div class="input-field"><input id="l-pas" type="password" placeholder="Contraseña"></div>
-      <button class="btn indigo-dark" onclick="login()">Iniciar Sesión</button>
-      <button class="btn-flat indigo-text" style="text-decoration: underline;" onclick="ejecutarFlujoOlvido()">¿Olvidó su contraseña?</button>
+      <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
+      <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
     </div>
 
-    <div id="view-forgot" class="hidden card-panel center-align">
-      <i class="material-icons large indigo-text">lock_outline</i>
-      <h5>Atención</h5>
-      <p>Si olvidó su contraseña debe realizar la solicitud de cambio de contraseña al correo electrónico de la administración.</p>
-      <div class="progress"><div class="indeterminate indigo"></div></div>
+    <div id="view-verify" class="hidden card-panel">
+      <h5 class="section-title">Datos de Residentes</h5>
+      
+      <div id="verify-res-content">
+        </div>
+
+      <div class="divider-light"></div>
+      
+      <h5 class="section-title">Vehículos Registrados</h5>
+      <div id="verify-veh-content">
+        </div>
+
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="showView('view-update')">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
+    </div>
+
+    <div id="view-pass" class="hidden card-panel">
+      <h5 class="section-title">Cambiar de Contraseña</h5>
+      <span class="helper-text-custom">Todos los campos son obligatorios.</span>
+      
+      <div class="pass-container input-field">
+        <input id="p-new" type="password" placeholder="Nueva Contraseña (min. 8 caracteres)">
+        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
+      </div>
+
+      <div class="pass-container input-field">
+        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
+        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
+      </div>
+
+      <div class="input-field" style="margin-top:30px">
+        <input id="p-tel" type="text" placeholder="Teléfono Registrado">
+      </div>
+      
+      <div class="input-field">
+        <input id="p-ema" type="email" placeholder="Email Registrado">
+      </div>
+      
+      <div style="margin-top:30px">
+        <button class="btn indigo-dark white-text" style="width:100%" onclick="submitPass()">Actualizar</button>
+        <button class="btn-flat grey-text center-align" style="width:100%; margin-top:10px" onclick="showView('view-dash')">VOLVER</button>
+      </div>
     </div>
 
     <div id="view-dash" class="hidden card-panel">
       <h5 class="center-align">Hola, <span id="dash-user" class="indigo-text"></span></h5>
-      <p class="center-align grey-text">Inmueble: <span id="dash-inm"></span></p>
-      <div style="margin-top:30px">
-        <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3;" onclick="showView('view-verify')">Verificar Información</button>
-        <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800;" onclick="showView('view-update')">Actualizar Datos</button>
-        <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0;" onclick="showView('view-pass')">Seguridad / Contraseña</button>
-        <button class="btn red lighten-5 red-text" style="margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
-      </div>
-    </div>
-
-    <div id="view-verify" class="hidden card-panel">
-      <h6 class="indigo-text font-weight-bold">Residentes Actuales</h6>
-      <div id="verify-res" class="verify-item"></div>
-      <h6 class="indigo-text font-weight-bold" style="margin-top:20px">Vehículos en Sistema</h6>
-      <div id="verify-veh"></div>
-      <div style="margin-top:25px">
-        <button class="btn orange darken-3" onclick="showView('view-update')">Ir a Actualizar</button>
-        <button class="btn grey lighten-2 black-text" onclick="showView('view-dash')">Volver</button>
-      </div>
+      <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
+      <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
+      <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
+      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Seguridad / Contraseña</button>
+      <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
     </div>
 
     <div id="view-update" class="hidden card-panel">
-      <h6 class="indigo-text">Actualizar Datos</h6>
+      <h6 class="indigo-text font-weight-bold">Actualizar Datos</h6>
       <div class="row">
         <div class="input-field col s12"><input id="u-res1" type="text" placeholder="Nombre Residente 1"></div>
         <div class="input-field col s12"><input id="u-tel1" type="text" placeholder="Teléfono Residente 1"></div>
@@ -75,20 +113,15 @@
         <div class="input-field col s12"><input id="u-tel2" type="text" placeholder="Teléfono Residente 2"></div>
         <div id="form-vehiculos"></div>
       </div>
-      <button class="btn green darken-2" onclick="valAndSave()">Guardar Cambios</button>
-      <button class="btn grey lighten-2 black-text" onclick="showView('view-dash')">Cancelar</button>
+      <button class="btn green darken-2 white-text" style="width:100%" onclick="valAndSave()">Guardar Cambios</button>
+      <button class="btn-flat grey-text" style="width:100%; margin-top:10px" onclick="showView('view-dash')">CANCELAR</button>
     </div>
 
-    <div id="view-pass" class="hidden card-panel">
-      <h6 class="indigo-text">Seguridad de la Cuenta</h6>
-      <div class="pass-container input-field">
-        <input id="p-new" type="password" placeholder="Nueva Contraseña">
-        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
-      </div>
-      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
-      <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
-      <button class="btn indigo-dark" onclick="submitPass()">Actualizar Contraseña</button>
-      <button class="btn-flat grey-text" onclick="showView('view-dash')">Volver</button>
+    <div id="view-forgot" class="hidden card-panel center-align">
+      <i class="material-icons large indigo-text">lock_outline</i>
+      <h5>Atención</h5>
+      <p>Si olvidó su contraseña, debe solicitar el cambio al correo de la administración.</p>
+      <div class="progress"><div class="indeterminate indigo"></div></div>
     </div>
   </div>
 
@@ -96,7 +129,7 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPd3-io_WZKtPW16jWzUVTeMRrHhSMNrFqUm3lPFtB7lsChDSe2LfiTDyp2HObZ33n/exec"; 
     let sess = { row: null, user: null };
 
-    // Inicializar campos de vehículos
+    // Inicializar campos de vehículos en vista actualizar
     const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=4; i++) {
       vForm.innerHTML += `
@@ -112,22 +145,20 @@
         </div>`;
     }
 
-    // FUNCIÓN DE COMUNICACIÓN CORREGIDA
     async function callAPI(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
         const response = await fetch(WEB_APP_URL, {
           method: 'POST',
-          mode: 'cors', // Cambiado a cors para permitir lectura de respuesta
+          mode: 'cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
         const data = await response.json();
         return data;
       } catch (e) {
-        console.error("Detalle del error:", e);
-        alert("Error de validación. Asegúrese de que su Script en Google esté implementado como 'Cualquiera' y haya aceptado los permisos.");
-        return { success: false, message: "Error de conexión." };
+        alert("Error de conexión con el servidor.");
+        return { success: false };
       } finally {
         document.getElementById('loader').style.display = 'none';
       }
@@ -146,6 +177,38 @@
         document.getElementById('dash-inm').innerText = res.userData.inmueble;
         showView('view-dash');
       } else alert(res.message || "Credenciales incorrectas.");
+    }
+
+    // LÓGICA DE RENDERIZADO PARA VISTA VERIFICAR (IMAGEN 1)
+    function renderVerify() {
+      const u = sess.user;
+      
+      // Residentes
+      let resHTML = `
+        <div class="data-group">
+          <span class="data-label">Residente 1: ${u.res1 || 'NO REGISTRADO'}</span>
+          <span class="data-sublabel">Tel: ${u.telR1 || '---'}</span>
+        </div>
+        <div class="data-group">
+          <span class="data-label">Residente 2: ${u.res2 || 'NO REGISTRADO'}</span>
+          <span class="data-sublabel">Tel: ${u.telR2 || '---'}</span>
+        </div>
+      `;
+      document.getElementById('verify-res-content').innerHTML = resHTML;
+
+      // Vehículos
+      let vehHTML = "";
+      let count = 0;
+      for(let i=1; i<=4; i++) {
+        if(u['p'+i]) {
+          count++;
+          vehHTML += `
+            <div class="data-group">
+              <span class="data-label">Vehículo ${count}: ${u['t'+i]} - [${u['p'+i]}]</span>
+            </div>`;
+        }
+      }
+      document.getElementById('verify-veh-content').innerHTML = vehHTML || '<p class="grey-text">Sin vehículos registrados.</p>';
     }
 
     async function valAndSave() {
@@ -167,31 +230,28 @@
 
     async function submitPass() {
       const n1 = document.getElementById('p-new').value;
-      if(n1.length < 8) return alert("Mínimo 8 caracteres.");
+      const n2 = document.getElementById('p-confirm').value;
+      const tel = document.getElementById('p-tel').value;
+      const ema = document.getElementById('p-ema').value;
+
+      if(!n1 || !n2 || !tel || !ema) return alert("Todos los campos son obligatorios.");
+      if(n1 !== n2) return alert("Las contraseñas no coinciden.");
+      if(n1.length < 8) return alert("La contraseña debe tener al menos 8 caracteres.");
+
       const res = await callAPI({ 
         action: 'changePass', 
         rowIndex: sess.row, 
         newPass: n1, 
-        tel: document.getElementById('p-tel').value, 
-        email: document.getElementById('p-ema').value 
+        tel: tel, 
+        email: ema 
       });
-      if(res.success) { alert("Clave cambiada."); cerrarSesion(); }
-      else alert(res.message);
-    }
 
-    function showView(id) {
-      document.querySelectorAll('.container > div:not(#loader)').forEach(v => v.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-      if(id === 'view-verify') renderVerify();
-      if(id === 'view-update') fillUpdate();
-    }
-
-    function renderVerify() {
-      const u = sess.user;
-      document.getElementById('verify-res').innerHTML = `<p><b>R1:</b> ${u.res1 || '---'}<br><b>R2:</b> ${u.res2 || '---'}</p>`;
-      let vehs = "";
-      for(let i=1; i<=4; i++) if(u['p'+i]) vehs += `<p>${u['t'+i]}: ${u['p'+i]}</p>`;
-      document.getElementById('verify-veh').innerHTML = vehs || "Sin vehículos.";
+      if(res.success) { 
+        alert("Contraseña actualizada."); 
+        cerrarSesion(); 
+      } else {
+        alert(res.message || "Los datos de validación no coinciden.");
+      }
     }
 
     function fillUpdate() {
@@ -206,14 +266,20 @@
       }
     }
 
+    function showView(id) {
+      document.querySelectorAll('.container > div:not(#loader)').forEach(v => v.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      if(id === 'view-verify') renderVerify();
+      if(id === 'view-update') fillUpdate();
+    }
+
     function togglePass(id) {
       const x = document.getElementById(id);
       x.type = x.type === "password" ? "text" : "password";
     }
 
     function cerrarSesion() { location.reload(); }
-    function ejecutarFlujoOlvido() { showView('view-forgot'); setTimeout(cerrarSesion, 5000); }
+    function ejecutarFlujoOlvido() { showView('view-forgot'); setTimeout(cerrarSesion, 6000); }
   </script>
 </body>
 </html>
-
