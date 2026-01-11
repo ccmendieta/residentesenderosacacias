@@ -3,235 +3,296 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Senderos de las Acacias - Gestión</title>
+  <title>Gestión de Residentes - Senderos de las Acacias</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     body { font-family: 'Poppins', sans-serif; background: #eef2f7; color: #2c3e50; }
     .hidden { display: none; }
-    .card-panel { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 35px; }
-    .btn { border-radius: 12px; font-weight: 600; height: 50px; text-transform: none; }
-    .section-title { color: #5c6bc0; font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; border-bottom: 1px solid #ddd; }
-    .data-group { margin-bottom: 15px; padding-left: 10px; border-left: 3px solid #5c6bc0; }
-    .data-label { font-weight: 600; display: block; color: #1a237e; }
-    .data-sublabel { font-size: 0.9rem; color: #555; display: block; }
+    .card-panel { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: none; padding: 35px; }
+    .brand-logo { color: #1a237e; font-weight: 600; font-size: 1.8rem; margin-bottom: 0; }
+    .sub-brand { font-size: 1.1rem; color: #5c6bc0; margin-top: 0; margin-bottom: 2rem; }
+    .btn { border-radius: 12px; text-transform: none; font-weight: 600; height: 50px; box-shadow: none; }
+    .indigo-dark { background-color: #1a237e !important; }
+    .section-title { color: #5c6bc0; font-size: 1.2rem; margin-bottom: 25px; font-weight: 400; }
+    .data-group { margin-bottom: 20px; }
+    .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
+    .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
+    .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
+    .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; margin-bottom: 5px !important; }
+    .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
+    .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
+    .helper-text-custom { color: #9e9e9e; font-size: 0.9rem; margin-bottom: 20px; display: block; }
+    .pass-container { position: relative; }
+    .pass-container i { position: absolute; right: 5px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
     #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
-    .vehiculo-card { background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
+    .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
   </style>
 </head>
 <body>
   <div class="progress" id="loader" style="margin:0;"><div class="indeterminate indigo"></div></div>
 
-  <div class="container" style="max-width: 450px; margin-top: 3vh;">
+  <div class="container" style="max-width: 480px; margin-top: 5vh;">
     
     <div id="view-login" class="card-panel center-align">
-      <h4 style="color:#1a237e; font-weight:600;">Senderos de las Acacias</h4>
+      <h1 class="brand-logo">Gestión de Residentes</h1>
+      <p class="sub-brand">Senderos de las Acacias</p>
       <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
-      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula"></div>
+      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario"></div>
       <div class="input-field"><input id="l-pas" type="password" placeholder="Contraseña"></div>
-      <button class="btn indigo darken-4 white-text" style="width:100%" onclick="login()">Entrar</button>
-      <button class="btn-flat indigo-text" style="margin-top:15px;" onclick="showView('view-forgot')">¿Olvidó su contraseña?</button>
-    </div>
-
-    <div id="view-dash" class="hidden card-panel">
-      <h5 class="center-align">Bienvenido,<br><span id="dash-user" class="indigo-text"></span></h5>
-      <p class="center-align grey-text">Inmueble: <span id="dash-inm"></span></p>
-      <button class="btn white blue-text text-darken-4" style="border:1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
-      <button class="btn white orange-text text-darken-4" style="border:1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
-      <button class="btn white purple-text text-darken-4" style="border:1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar Contraseña</button>
-      <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="location.reload()">Cerrar Sesión</button>
+      <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
+      <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
     </div>
 
     <div id="view-verify" class="hidden card-panel">
-      <div class="section-title">DATOS DE RESIDENTES</div>
+      <h5 class="section-title">Datos de Residentes</h5>
       <div id="verify-res-content"></div>
-      <div class="section-title" style="margin-top:20px">VEHÍCULOS</div>
+      <div class="divider-light"></div>
+      <h5 class="section-title">Vehículos Registrados</h5>
       <div id="verify-veh-content"></div>
-      <div style="margin-top:30px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex:1;" onclick="showView('view-update')">Actualizar</button>
-        <button class="btn grey lighten-2 black-text" style="flex:1;" onclick="showView('view-dash')">Volver</button>
-      </div>
-    </div>
-
-    <div id="view-update" class="hidden card-panel">
-      <h5 class="center-align">Actualizar Datos</h5>
-      <div class="row">
-        <div class="input-field col s12">
-          <label class="active">Nombre Residente Principal</label>
-          <input id="u-resPrincipal" type="text" style="text-transform: uppercase;">
-        </div>
-        <div class="input-field col s12">
-          <label class="active">Teléfono Residente Principal</label>
-          <input id="u-telResPrincipal" type="text">
-        </div>
-        <div id="form-otros-res"></div>
-        <div id="form-vehiculos"></div>
-      </div>
-      <div style="margin-top:20px; display: flex; gap: 10px;">
-        <button class="btn orange darken-4 white-text" style="flex:1;" onclick="valAndSave()">Guardar</button>
-        <button class="btn grey lighten-2 black-text" style="flex:1;" onclick="showView('view-dash')">Cancelar</button>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="showView('view-update')">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
       </div>
     </div>
 
     <div id="view-pass" class="hidden card-panel">
-      <h5>Nueva Contraseña</h5>
-      <div class="input-field"><input id="p-new" type="password" placeholder="Nueva Clave"></div>
-      <div class="input-field"><input id="p-confirm" type="password" placeholder="Confirmar Clave"></div>
-      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
-      <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
-      <button class="btn indigo darken-4 white-text" style="width:100%" onclick="submitPass()">Actualizar</button>
-      <button class="btn-flat" style="width:100%" onclick="showView('view-dash')">Volver</button>
+      <h5 class="section-title">Cambiar de Contraseña</h5>
+      <span class="helper-text-custom">Todos los campos son obligatorios.</span>
+      <div class="pass-container input-field">
+        <input id="p-new" type="password" placeholder="Nueva Contraseña (min. 8 caracteres)">
+        <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
+      </div>
+      <div class="pass-container input-field">
+        <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
+        <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
+      </div>
+      <div class="input-field" style="margin-top:30px">
+        <input id="p-tel" type="text" placeholder="Teléfono Registrado">
+      </div>
+      <div class="input-field">
+        <input id="p-ema" type="email" placeholder="Email Registrado">
+      </div>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
+    </div>
+
+    <div id="view-dash" class="hidden card-panel">
+      <h5 class="center-align">Hola, <span id="dash-user" class="indigo-text"></span></h5>
+      <p class="center-align grey-text" style="margin-bottom:30px">Inmueble: <span id="dash-inm"></span></p>
+      <button class="btn white blue-text text-darken-4" style="border: 1px solid #2196f3; width:100%; margin-bottom:15px" onclick="showView('view-verify')">Verificar Información</button>
+      <button class="btn white orange-text text-darken-4" style="border: 1px solid #ff9800; width:100%; margin-bottom:15px" onclick="showView('view-update')">Actualizar Datos</button>
+      <button class="btn white purple-text text-darken-4" style="border: 1px solid #9c27b0; width:100%; margin-bottom:15px" onclick="showView('view-pass')">Cambiar de Contraseña</button>
+      <button class="btn red lighten-5 red-text" style="width:100%; margin-top:20px" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+
+    <div id="view-update" class="hidden card-panel">
+      <h5 class="section-title">Actualizar Datos</h5>
+      <div class="row" style="margin-bottom: 0;">
+        <div id="form-residentes"></div>
+        <div id="form-vehiculos"></div>
+      </div>
+      <div style="margin-top:40px; display: flex; gap: 10px;">
+        <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
+        <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
+      </div>
     </div>
 
     <div id="view-forgot" class="hidden card-panel center-align">
-      <i class="material-icons large indigo-text">lock</i>
-      <p>Para recuperar su cuenta, contacte a la administración del conjunto.</p>
-      <button class="btn indigo" onclick="showView('view-login')">Volver</button>
+      <i class="material-icons large indigo-text">lock_outline</i>
+      <h5>Atención</h5>
+      <p>Si olvidó su contraseña debe realizar la solicitud de cambio de contraseña al correo electrónico de la administración.</p>
+      <div class="progress"><div class="indeterminate indigo"></div></div>
     </div>
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzHipgE9pXSWHkE-XLD5klCgWEnNSY0QjeJoW5BYeN2P6F3jMPdYZjg6t2TLLKKvdos/exec"; 
+    // URL del Web App de Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwdAAMJIG0du5vztFX7-uAFisBHcG4CtyXiktjd0YgN3nkX3SlUYCczI5s2K3UHtba7/exec"; 
     let sess = { row: null, user: null };
 
-    // Generar campos dinámicos para residentes 2-5
-    const otrRes = document.getElementById('form-otros-res');
-    for(let i=2; i<=5; i++) {
-      otrRes.innerHTML += `
-        <div class="input-field col s12">
-          <label class="active">Nombre Residente ${i}</label>
-          <input id="u-res${i}" type="text" style="text-transform: uppercase;">
+    /**
+     * GENERACIÓN DINÁMICA DE FORMULARIOS
+     * Crea campos para 5 residentes y 5 vehículos.
+     */
+    const resForm = document.getElementById('form-residentes');
+    for(let i=1; i<=5; i++) {
+      resForm.innerHTML += `
+        <div class="input-field col s12" style="margin-top: 0;">
+          <label class="active-label">Residente ${i === 1 ? 'Principal' : i}</label>
+          <input id="u-res${i}" type="text" placeholder="Nombre completo">
         </div>
         <div class="input-field col s12">
-          <label class="active">Teléfono Residente ${i}</label>
-          <input id="u-telR${i}" type="text">
+          <label class="active-label">Teléfono ${i === 1 ? 'Residente Principal' : 'Residente ' + i}</label>
+          <input id="u-tel${i}" type="text" placeholder="Número de contacto">
         </div>`;
     }
 
-    // Generar campos para 5 vehículos
-    const vh = document.getElementById('form-vehiculos');
+    const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=5; i++) {
-      vh.innerHTML += `
+      vForm.innerHTML += `
         <div class="col s12 vehiculo-card">
-          <label>Vehículo ${i}</label>
-          <select id="u-t${i}" class="browser-default">
-            <option value="">-- Tipo --</option>
+          <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
+          <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
+            <option value="">-- Seleccione Tipo --</option>
             <option value="MOTOCICLETA">MOTOCICLETA</option>
             <option value="AUTOMÓVIL">AUTOMÓVIL</option>
             <option value="CAMIONETA">CAMIONETA</option>
           </select>
-          <input id="u-p${i}" type="text" placeholder="PLACA" maxlength="6" style="text-transform: uppercase;">
+          <input id="u-p${i}" type="text" maxlength="6" placeholder="Placa ${i}" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')">
         </div>`;
     }
 
-    async function callAPI(p){
-      document.getElementById('loader').style.display='block';
+    /**
+     * FUNCIÓN COMUNICACIÓN API
+     * Envía las peticiones al servidor de Google.
+     */
+    async function callAPI(payload) {
+      document.getElementById('loader').style.display = 'block';
       try {
-        const r = await fetch(WEB_APP_URL, {method:'POST', body:JSON.stringify(p)});
-        return await r.json();
-      } catch(e) { alert("Error de conexión"); return {success:false}; }
-      finally { document.getElementById('loader').style.display='none'; }
+        const response = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        return data;
+      } catch (e) {
+        alert("Error de conexión con el servidor.");
+        return { success: false };
+      } finally {
+        document.getElementById('loader').style.display = 'none';
+      }
     }
 
-    async function login(){
-      const i=document.getElementById('l-inm').value, c=document.getElementById('l-ced').value, p=document.getElementById('l-pas').value;
-      if(!i||!c||!p) return alert("Complete los campos");
-      const r = await callAPI({action:'login', inmueble:i, cedula:c, password:p});
-      if(r.success){
-        sess = {row: r.rowIndex, user: r.userData};
-        document.getElementById('dash-user').innerText = r.userData.nombreProp;
-        document.getElementById('dash-inm').innerText = r.userData.inmueble;
+    /**
+     * FUNCIÓN LOGIN
+     * Envía credenciales y guarda la sesión en la variable 'sess'.
+     */
+    async function login() {
+      const inm = document.getElementById('l-inm').value.toUpperCase();
+      const ced = document.getElementById('l-ced').value;
+      const pas = document.getElementById('l-pas').value;
+      if(!inm || !ced || !pas) return alert("Complete los datos.");
+
+      const res = await callAPI({ action: 'login', inmueble: inm, cedula: ced, password: pas });
+      if(res.success) {
+        sess = { row: res.rowIndex, user: res.userData };
+        document.getElementById('dash-user').innerText = res.userData.nombre;
+        document.getElementById('dash-inm').innerText = res.userData.inmueble;
         showView('view-dash');
-      } else alert(r.message);
+      } else alert(res.message || "Credenciales incorrectas.");
     }
 
-    function renderVerify(){
-      const u = sess.user; 
-      // Residente Principal
-      let h = `<div class="data-group">
-                 <span class="data-label">Residente Principal: ${u.resPrincipal || 'VACÍO'}</span>
-                 <span class="data-sublabel">Teléfono Principal: ${u.telResPrincipal || '---'}</span>
-               </div>`;
-      // Otros residentes
-      for(let i=2; i<=5; i++){
-        if(u['res'+i]) h += `<div class="data-group">
-                               <span class="data-label">Residente ${i}: ${u['res'+i]}</span>
-                               <span class="data-sublabel">Tel: ${u['telR'+i] || '---'}</span>
-                             </div>`;
-      }
-      document.getElementById('verify-res-content').innerHTML = h;
-      
-      let v = "";
-      for(let i=1; i<=5; i++){
-        if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - ${u['p'+i]}</span></div>`;
-      }
-      document.getElementById('verify-veh-content').innerHTML = v || "No hay vehículos registrados";
-    }
-
-    async function valAndSave(){
-      let d = {};
-      // Recoger datos y pasar a mayúsculas
-      d.resPrincipal = document.getElementById('u-resPrincipal').value.trim().toUpperCase();
-      d.telResPrincipal = document.getElementById('u-telResPrincipal').value.trim();
-      
-      for(let i=2; i<=5; i++){
-        d['res'+i] = document.getElementById('u-res'+i).value.trim().toUpperCase();
-        d['telR'+i] = document.getElementById('u-telR'+i).value.trim();
-        if(d['res'+i] && !d['telR'+i]) return alert("Falta teléfono del residente "+i);
-      }
-      for(let i=1; i<=5; i++){
-        d['t'+i] = document.getElementById('u-t'+i).value;
-        d['p'+i] = document.getElementById('u-p'+i).value.trim().toUpperCase();
-      }
-
-      // Lógica de Restauración
-      if(!d.resPrincipal && !d.telResPrincipal){
-        if(!confirm("Se borrarán todos los datos. El sistema restaurará al Propietario como residente principal. ¿Continuar?")) return;
-        // Limpiar todo el objeto
-        for(let key in d) d[key] = "";
-        // Restaurar con datos del propietario guardados al login
-        d.resPrincipal = sess.user.nombreProp.toUpperCase();
-        d.telResPrincipal = sess.user.telProp;
-      }
-
-      const r = await callAPI({action:'update', rowIndex:sess.row, data:d});
-      if(r.success){ 
-        alert("Datos actualizados con éxito"); 
-        sess.user = {...sess.user, ...d}; 
-        showView('view-dash'); 
-      }
-    }
-
-    function fillUpdate(){
+    /**
+     * FUNCIÓN RENDERIZAR VERIFICACIÓN
+     * Muestra los datos actuales guardados en la base de datos (Lectura).
+     */
+    function renderVerify() {
       const u = sess.user;
-      document.getElementById('u-resPrincipal').value = u.resPrincipal || "";
-      document.getElementById('u-telResPrincipal').value = u.telResPrincipal || "";
-      for(let i=2; i<=5; i++){
-        document.getElementById('u-res'+i).value = u['res'+i] || "";
-        document.getElementById('u-telR'+i).value = u['telR'+i] || "";
+      let resHTML = "";
+      for(let i=1; i<=5; i++) {
+        if(u['res'+i]) {
+          resHTML += `
+            <div class="data-group">
+              <span class="data-label">Residente ${i === 1 ? 'Principal' : i}: ${u['res'+i]}</span>
+              <span class="data-sublabel">Tel: ${u['telR'+i] || '---'}</span>
+            </div>`;
+        }
       }
-      for(let i=1; i<=5; i++){
+      document.getElementById('verify-res-content').innerHTML = resHTML || '<p class="grey-text">No hay residentes registrados.</p>';
+
+      let vehHTML = "";
+      let count = 0;
+      for(let i=1; i<=5; i++) {
+        if(u['p'+i]) {
+          count++;
+          vehHTML += `
+            <div class="data-group">
+              <span class="data-label">Vehículo ${count}: ${u['t'+i]} - [${u['p'+i]}]</span>
+            </div>`;
+        }
+      }
+      document.getElementById('verify-veh-content').innerHTML = vehHTML || '<p class="grey-text">Sin vehículos registrados.</p>';
+    }
+
+    /**
+     * FUNCIÓN GUARDAR CAMBIOS
+     * Recopila los datos de los inputs y los envía al servidor.
+     */
+    async function valAndSave() {
+      const d = {};
+      // Recolectar residentes
+      for(let i=1; i<=5; i++) {
+        d['res'+i] = document.getElementById('u-res'+i).value;
+        d['telR'+i] = document.getElementById('u-tel'+i).value;
+      }
+      // Recolectar vehículos
+      for(let i=1; i<=5; i++) {
+        d['t'+i] = document.getElementById('u-t'+i).value;
+        d['p'+i] = document.getElementById('u-p'+i).value;
+      }
+
+      const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
+      if(res.success) {
+        alert("¡Datos actualizados!");
+        sess.user = {...sess.user, ...d}; // Actualiza la sesión local con los nuevos datos
+        showView('view-dash');
+      }
+    }
+
+    /**
+     * FUNCIÓN CAMBIAR PASSWORD
+     */
+    async function submitPass() {
+      const n1 = document.getElementById('p-new').value;
+      const n2 = document.getElementById('p-confirm').value;
+      const tel = document.getElementById('p-tel').value;
+      const ema = document.getElementById('p-ema').value;
+      if(!n1 || !n2 || !tel || !ema) return alert("Todos los campos son obligatorios.");
+      if(n1 !== n2) return alert("Las contraseñas no coinciden.");
+      if(n1.length < 8) return alert("La contraseña debe tener al menos 8 caracteres.");
+      
+      const res = await callAPI({ action: 'changePass', rowIndex: sess.row, newPass: n1, tel: tel, email: ema });
+      if(res.success) { alert("Contraseña actualizada."); cerrarSesion(); }
+      else alert(res.message || "Los datos de validación no coinciden.");
+    }
+
+    /**
+     * FUNCIÓN LLENAR FORMULARIO
+     * Pre-carga los datos actuales en los campos de edición.
+     */
+    function fillUpdate() {
+      const u = sess.user;
+      for(let i=1; i<=5; i++) {
+        document.getElementById('u-res'+i).value = u['res'+i] || "";
+        document.getElementById('u-tel'+i).value = u['telR'+i] || "";
         document.getElementById('u-t'+i).value = u['t'+i] || "";
         document.getElementById('u-p'+i).value = u['p'+i] || "";
       }
     }
 
-    async function submitPass(){
-      const n1=document.getElementById('p-new').value, n2=document.getElementById('p-confirm').value;
-      const t=document.getElementById('p-tel').value, e=document.getElementById('p-ema').value;
-      if(n1!==n2) return alert("Claves no coinciden");
-      const r = await callAPI({action:'changePass', rowIndex:sess.row, newPass:n1, tel:t, email:e});
-      if(r.success){ alert("Clave cambiada"); location.reload(); } else alert(r.message);
+    /**
+     * FUNCIÓN CONTROL DE VISTAS
+     */
+    function showView(id) {
+      document.querySelectorAll('.container > div:not(#loader)').forEach(v => v.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      if(id === 'view-verify') renderVerify();
+      if(id === 'view-update') fillUpdate();
     }
 
-    function showView(id){
-      document.querySelectorAll('.container > div:not(#loader)').forEach(v=>v.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-      if(id==='view-verify') renderVerify();
-      if(id==='view-update') fillUpdate();
+    function togglePass(id) {
+      const x = document.getElementById(id);
+      x.type = x.type === "password" ? "text" : "password";
     }
+
+    function cerrarSesion() { location.reload(); }
+    function ejecutarFlujoOlvido() { showView('view-forgot'); setTimeout(cerrarSesion, 6000); }
   </script>
 </body>
 </html>
-
