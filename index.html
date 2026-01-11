@@ -20,8 +20,6 @@
     .data-label { font-weight: 600; font-size: 1rem; color: #2c3e50; margin-bottom: 2px; display: block; }
     .data-sublabel { font-size: 0.85rem; color: #757575; display: block; margin-bottom: 15px; }
     .divider-light { border-top: 1px solid #f0f0f0; margin: 20px 0; }
-    .input-field input { border-bottom: 1px solid #e0e0e0 !important; font-size: 0.95rem !important; margin-bottom: 5px !important; }
-    .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
     .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
     #loader { position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; display: none; }
     .vehiculo-card { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
@@ -66,7 +64,9 @@
     <div id="view-update" class="hidden card-panel">
       <h5 class="section-title">Actualizar Datos</h5>
       <div class="row" style="margin-bottom: 0;">
-        <div id="form-residentes"></div> <div id="form-vehiculos"></div> </div>
+        <div id="form-residentes"></div>
+        <div id="form-vehiculos"></div>
+      </div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
         <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="valAndSave()">Actualizar</button>
         <button class="btn grey lighten-2 black-text" style="flex: 1;" onclick="showView('view-dash')">Volver</button>
@@ -76,14 +76,14 @@
     <div id="view-pass" class="hidden card-panel">
       <h5 class="section-title">Cambiar de Contraseña</h5>
       <div class="pass-container input-field">
-        <input id="p-new" type="password" placeholder="Nueva Contraseña (min. 8 caracteres)">
+        <input id="p-new" type="password" placeholder="Nueva Contraseña">
         <i class="material-icons" onclick="togglePass('p-new')">visibility</i>
       </div>
       <div class="pass-container input-field">
         <input id="p-confirm" type="password" placeholder="Confirmar Contraseña">
         <i class="material-icons" onclick="togglePass('p-confirm')">visibility</i>
       </div>
-      <div class="input-field" style="margin-top:30px"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
+      <div class="input-field"><input id="p-tel" type="text" placeholder="Teléfono Registrado"></div>
       <div class="input-field"><input id="p-ema" type="email" placeholder="Email Registrado"></div>
       <div style="margin-top:40px; display: flex; gap: 10px;">
         <button class="btn orange darken-4 white-text" style="flex: 1;" onclick="submitPass()">Actualizar</button>
@@ -102,7 +102,7 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPd3-io_WZKtPW16jWzUVTeMRrHhSMNrFqUm3lPFtB7lsChDSe2LfiTDyp2HObZ33n/exec"; 
     let sess = { row: null, user: null };
 
-    // Generar campos de residentes 1-5 en el formulario
+    // Generar campos de residentes (1 al 5)
     const rForm = document.getElementById('form-residentes');
     for(let i=1; i<=5; i++) {
       rForm.innerHTML += `
@@ -116,7 +116,7 @@
         </div>`;
     }
 
-    // Generar campos de vehículos 1-5 en el formulario
+    // Generar campos de vehículos (1 al 5)
     const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=5; i++) {
       vForm.innerHTML += `
@@ -164,7 +164,6 @@
       } else alert(res.message);
     }
 
-    // Lógica 1.2: Mostrar solo si tienen información
     function renderVerify() {
       const u = sess.user;
       let resHTML = "";
@@ -193,33 +192,25 @@
 
     async function valAndSave() {
       let d = {};
-      
-      // Validación 1.2: No permitir residente sin teléfono
       for(let i=1; i<=5; i++) {
         const nom = document.getElementById('u-res'+i).value.trim();
         const tel = document.getElementById('u-tel'+i).value.trim();
-        if(nom && !tel) return alert(`Debe ingresar el teléfono para el Residente ${i}`);
+        if(nom && !tel) return alert(`El Residente ${i} requiere un teléfono.`);
         d['res'+i] = nom; d['telR'+i] = tel;
       }
-
-      // Captura de vehículos
       for(let i=1; i<=5; i++) {
         d['t'+i] = document.getElementById('u-t'+i).value;
         d['p'+i] = document.getElementById('u-p'+i).value.toUpperCase();
       }
 
-      // Lógica 1.3: Borrado masivo si Residente 1 está vacío
+      // Lógica 1.3: Restauración Propietario Corregida
       if(!d.res1 && !d.telR1) {
-        const confirmacion = confirm("ATENCIÓN: Se borrarán todos los residentes y vehículos. Solo quedarán los datos del propietario. ¿Desea continuar?");
-        if(!confirmacion) return;
-        
+        if(!confirm("Se borrarán residentes y vehículos. Se restaurarán los datos del propietario. ¿Continuar?")) return;
         for(let i=1; i<=5; i++){
-          d['res'+i] = ""; d['telR'+i] = "";
-          d['t'+i] = ""; d['p'+i] = "";
+          d['res'+i] = ""; d['telR'+i] = ""; d['t'+i] = ""; d['p'+i] = "";
         }
-        // Restaurar con datos del propietario guardados en la sesión
         d.res1 = sess.user.nombre;
-        d.telR1 = sess.user.telProp;
+        d.telR1 = sess.user.telProp; // Ahora sí captura el teléfono correctamente
       }
 
       const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
@@ -236,9 +227,9 @@
       const tel = document.getElementById('p-tel').value;
       const ema = document.getElementById('p-ema').value;
       if(!n1 || !n2 || !tel || !ema) return alert("Complete todo.");
-      if(n1 !== n2) return alert("Las contraseñas no coinciden.");
+      if(n1 !== n2) return alert("No coinciden.");
       const res = await callAPI({ action: 'changePass', rowIndex: sess.row, newPass: n1, tel: tel, email: ema });
-      if(res.success) { alert("Contraseña actualizada."); cerrarSesion(); }
+      if(res.success) { alert("Éxito."); cerrarSesion(); }
       else alert(res.message);
     }
 
