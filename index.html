@@ -23,11 +23,10 @@
     .input-field input:focus { border-bottom: 2px solid #1a237e !important; box-shadow: none !important; }
     .input-field label.active-label { position: static; font-size: 0.9rem; color: #2c3e50; font-weight: 400; margin-bottom: 5px; display: block; }
     
-    /* 1.1 Quitar flechas del input number de Cédula */
+    /* Quita flechas en inputs numericos */
     input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
 
-    /* Estilos para contenedores con iconos de ojo */
     .pass-container { position: relative; }
     .pass-container i { position: absolute; right: 10px; bottom: 15px; cursor: pointer; color: #9e9e9e; font-size: 20px; z-index: 5; }
 
@@ -43,12 +42,22 @@
     <div id="view-login" class="card-panel center-align">
       <h1 class="brand-logo">Gestión de Residentes</h1>
       <p class="sub-brand">Senderos de las Acacias</p>
-      <div class="input-field"><input id="l-inm" type="text" placeholder="Inmueble (Ej: A101)"></div>
-      <div class="input-field"><input id="l-ced" type="number" placeholder="Cédula de Propietario" onkeypress="return event.charCode >= 48 && event.charCode <= 57"></div>
+      
+      <div class="input-field">
+        <input id="l-inm" type="text" maxlength="4" placeholder="Inmueble (Ej: A101)" 
+               oninput="this.value = this.value.toUpperCase()"
+               title="Una letra (A-J) seguida de 3 números">
+      </div>
+
+      <div class="input-field">
+        <input id="l-ced" type="number" placeholder="Cédula de Propietario" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+      </div>
+
       <div class="pass-container input-field">
         <input id="l-pas" type="password" placeholder="Contraseña">
         <i class="material-icons" onclick="togglePass('l-pas')">visibility</i>
       </div>
+
       <button class="btn indigo-dark white-text w100" style="width:100%" onclick="login()">Iniciar Sesión</button>
       <button class="btn-flat indigo-text" style="text-decoration: underline; margin-top:15px;" onclick="ejecutarFlujoOlvido()">¿OLVIDÓ SU CONTRASEÑA?</button>
     </div>
@@ -112,12 +121,11 @@
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxKrbuvgNRHlCBCxIR7YjQ1n2AENjYW_jt5ZR69zgVRAjOPHnl8hdfrFWYI12_N8dxF/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzoAAYAdgkqebEez7RP6wvcBx8o6FFDSycyL5D_M_W7g6ZmM8BjkOJ0oSc7SlPqstYU/exec"; 
     let sess = { row: null, user: null };
 
     /**
-     * GENERACIÓN DINÁMICA DE CAMPOS
-     * 2.1 Los nombres de residentes se fuerzan a MAYÚSCULAS en tiempo real.
+     * RENDERIZADO DINÁMICO
      */
     const resForm = document.getElementById('form-residentes');
     for(let i=1; i<=5; i++) {
@@ -134,11 +142,12 @@
 
     const vForm = document.getElementById('form-vehiculos');
     for(let i=1; i<=5; i++) {
+      // 2.1 Placas: Mayúsculas y límite 6 caracteres
       vForm.innerHTML += `
         <div class="col s12 vehiculo-card">
           <label class="blue-text" style="font-weight:600">Vehículo ${i}</label>
           <select id="u-t${i}" class="browser-default" style="margin: 10px 0; border: 1px solid #ddd; border-radius: 8px;">
-            <option value="">-- Tipo --</option>
+            <option value="">-- Seleccione Tipo --</option>
             <option value="MOTOCICLETA">MOTOCICLETA</option>
             <option value="AUTOMÓVIL">AUTOMÓVIL</option>
             <option value="CAMIONETA">CAMIONETA</option>
@@ -147,6 +156,9 @@
         </div>`;
     }
 
+    /**
+     * COMUNICACIÓN CON EL API
+     */
     async function callAPI(payload) {
       document.getElementById('loader').style.display = 'block';
       try {
@@ -156,9 +168,22 @@
       finally { document.getElementById('loader').style.display = 'none'; }
     }
 
+    /**
+     * LOGIN CON VALIDACIÓN DE FORMATO INMUEBLE (1.1)
+     */
     async function login() {
-      const inm = document.getElementById('l-inm').value.toUpperCase(), ced = document.getElementById('l-ced').value, pas = document.getElementById('l-pas').value;
-      if(!inm || !ced || !pas) return alert("Complete los datos.");
+      const inm = document.getElementById('l-inm').value.toUpperCase();
+      const ced = document.getElementById('l-ced').value;
+      const pas = document.getElementById('l-pas').value;
+
+      if(!inm || !ced || !pas) return alert("Complete todos los campos.");
+
+      // Regex: Una letra A-J seguida de 3 dígitos exactos
+      const regexInm = /^[A-J][0-9]{3}$/;
+      if(!regexInm.test(inm)) {
+        return alert("Formato de inmueble incorrecto. Debe ser una letra (A-J) y tres números. Ej: A101");
+      }
+
       const res = await callAPI({ action: 'login', inmueble: inm, cedula: ced, password: pas });
       if(res.success) {
         sess = { row: res.rowIndex, user: res.userData };
@@ -169,48 +194,60 @@
     }
 
     /**
-     * FUNCIÓN ACTUALIZAR CON VALIDACIONES Y RESTAURACIÓN
+     * VALIDACIÓN Y GUARDADO DE DATOS (2.1 y 2.2)
      */
     async function valAndSave() {
       const d = {};
       
-      // 2.2 Validación de campos unidos (Nombre + Teléfono)
+      // Validación Residentes (Campos unidos)
       for(let i=1; i<=5; i++) {
         const n = document.getElementById('u-res'+i).value.trim();
         const t = document.getElementById('u-tel'+i).value.trim();
-        
-        // Si uno existe y el otro no, error.
         if((n && !t) || (!n && t)) {
-          alert("Error en Residente " + (i===1?'Principal':i) + ": Debe completar tanto el nombre como el teléfono.");
+          alert("Residente " + i + ": Debe completar nombre y teléfono.");
           return;
         }
-        d['res'+i] = n.toUpperCase();
-        d['telR1'] = t; // Nota: El backend espera 'telR1', 'telR2', etc.
-        // Corrección de nombre de clave para el bucle:
-        d['telR' + i] = t;
+        d['res'+i] = n; d['telR'+i] = t;
       }
 
-      // 2.2 Lógica de eliminación y restauración de Propietario
+      // 2.2 Validación Vehículos (Campos unidos) y Formato Placas (2.1)
+      for(let i=1; i<=5; i++) {
+        const tipo = document.getElementById('u-t'+i).value;
+        const placa = document.getElementById('u-p'+i).value.trim().toUpperCase();
+
+        if((tipo && !placa) || (!tipo && placa)) {
+          alert("Vehículo " + i + ": Debe completar tipo y placa.");
+          return;
+        }
+
+        if(placa) {
+          // Lógica de formatos de placa
+          if(tipo === "AUTOMÓVIL" || tipo === "CAMIONETA") {
+            if(!/^[A-Z]{3}[0-9]{3}$/.test(placa)) {
+              alert("Placa " + i + " inválida para Carro: 3 letras y 3 números (Ej: ABC123)");
+              return;
+            }
+          } else if(tipo === "MOTOCICLETA") {
+            if(!/^[A-Z]{3}[0-9]{2}[A-Z]$/.test(placa)) {
+              alert("Placa " + i + " inválida para Moto: 3 letras, 2 números y 1 letra (Ej: ABC12D)");
+              return;
+            }
+          }
+        }
+        d['t'+i] = tipo; d['p'+i] = placa;
+      }
+
+      // Restauración si se borra Residente Principal
       if(!d.res1 && !d.telR1) {
-        const confirmar = confirm("Se borrarán todos los datos de residentes y vehículos. Se restaurará el NOMBRE y TELÉFONO del PROPIETARIO como datos principales. ¿Desea continuar?");
-        if(!confirmar) return;
-        
-        // Limpiar todo
+        if(!confirm("Se borrarán residentes y vehículos. Se restaurará al Propietario. ¿Continuar?")) return;
         for(let i=1; i<=5; i++) { d['res'+i]=""; d['telR'+i]=""; d['t'+i]=""; d['p'+i]=""; }
-        // Restaurar Propietario (Datos guardados en sess.user al login)
         d.res1 = sess.user.nombre.toUpperCase();
         d.telR1 = sess.user.telProp;
       }
 
-      // Recopilar vehículos
-      for(let i=1; i<=5; i++) {
-        d['t'+i] = document.getElementById('u-t'+i).value;
-        d['p'+i] = document.getElementById('u-p'+i).value.toUpperCase();
-      }
-
       const res = await callAPI({ action: 'update', rowIndex: sess.row, data: d });
       if(res.success) {
-        alert("¡Datos actualizados con éxito!");
+        alert("¡Datos actualizados!");
         sess.user = {...sess.user, ...d};
         showView('view-dash');
       }
@@ -220,11 +257,11 @@
       const u = sess.user;
       let h = "";
       for(let i=1; i<=5; i++) {
-        if(u['res'+i]) h += `<div class="data-group"><span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]||'---'}</span></div>`;
+        if(u['res'+i]) h += `<div class="data-group"><span class="data-label">Residente ${i==1?'Principal':i}: ${u['res'+i]}</span><span class="data-sublabel">Tel: ${u['telR'+i]}</span></div>`;
       }
-      document.getElementById('verify-res-content').innerHTML = h || "Sin residentes.";
+      document.getElementById('verify-res-content').innerHTML = h || "Sin datos.";
       let v = "";
-      for(let i=1; i<=5; i++) { if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - [${u['p'+i]}]</span></div>`; }
+      for(let i=1; i<=5; i++) { if(u['p'+i]) v += `<div class="data-group"><span class="data-label">Vehículo ${i}: ${u['t'+i]} - ${u['p'+i]}</span></div>`; }
       document.getElementById('verify-veh-content').innerHTML = v || "Sin vehículos.";
     }
 
